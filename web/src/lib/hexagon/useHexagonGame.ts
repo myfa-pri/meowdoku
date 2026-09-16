@@ -12,9 +12,16 @@ export interface GameState {
   history: HexBoard[];
   level: number;
   isGameOver: boolean;
+  handleDrop: (blockId: string, pivotCoord: HexCoord) => boolean;
+  undo: () => void;
+  shuffle: () => void;
+  hint: () => void;
+  resetBoard: () => void;
+  advanceLevel: () => void;
+  canUndo: boolean;
 }
 
-export const useHexagonGame = (initialRadius: number = 3) => {
+export const useHexagonGame = (initialRadius: number = 3): GameState => {
   const [board, setBoard] = useState<HexBoard>(generateEmptyBoard(initialRadius));
   const [availableBlocks, setAvailableBlocks] = useState<HexBlock[]>([]);
   const [score, setScore] = useState<number>(0);
@@ -115,6 +122,21 @@ export const useHexagonGame = (initialRadius: number = 3) => {
     // Implement hint logic (e.g., highlight a valid drop zone)
   }, []);
 
+  const resetBoard = useCallback(() => {
+    setBoard(generateEmptyBoard(initialRadius));
+    setAvailableBlocks([
+      generateRandomBlock(`block-${Date.now()}-1`),
+      generateRandomBlock(`block-${Date.now()}-2`),
+      generateRandomBlock(`block-${Date.now()}-3`)
+    ]);
+    setHistory([]);
+  }, [initialRadius]);
+
+  const advanceLevel = useCallback(() => {
+    setLevel(prev => prev + 1);
+    resetBoard();
+  }, [resetBoard]);
+
   return {
     board,
     availableBlocks,
@@ -126,6 +148,8 @@ export const useHexagonGame = (initialRadius: number = 3) => {
     undo,
     shuffle,
     hint,
+    resetBoard,
+    advanceLevel,
     canUndo: history.length > 0
   };
 };
