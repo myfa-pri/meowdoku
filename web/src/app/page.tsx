@@ -41,8 +41,9 @@ import { ProfileModal } from '../components/ProfileModal';
 import { ShopModal, PurchaseResult } from '../components/ShopModal';
 import { GameSelectionScreen } from '../components/GameSelectionScreen';
 import { PawBalanceGameScreen } from '../components/pawbalance/PawBalanceGameScreen';
+import { HexagonGameApp } from '../components/hexagon-sort/HexagonGameApp';
 
-type ScreenType = 'loading' | 'hub' | 'home' | 'game' | 'not_in_telegram' | 'pawbalance_game';
+type ScreenType = 'loading' | 'hub' | 'home' | 'game' | 'not_in_telegram' | 'pawbalance_game' | 'hexagon_game';
 
 export default function App() {
   const { t, initLanguageFromTelegram } = useI18n();
@@ -966,6 +967,7 @@ export default function App() {
           user={user}
           onSelectMeowdoku={() => setScreen('home')}
           onSelectPawBalance={() => setScreen('pawbalance_game')}
+          onSelectHexagonSort={() => setScreen('hexagon_game')}
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenProfile={() => setIsProfileOpen(true)}
         />
@@ -1012,6 +1014,21 @@ export default function App() {
           triggerHaptic('light');
           setScreen('hub');
         }} />
+      )}
+
+      {/* Hexagon Block Sort Game Screen */}
+      {screen === 'hexagon_game' && user && (
+        <div className="w-full h-full absolute inset-0 z-50 bg-[#1A1A2E]">
+          <HexagonGameApp
+            user={user}
+            initData={initData}
+            onBack={() => {
+              playTap();
+              triggerHaptic('light');
+              setScreen('hub');
+            }}
+          />
+        </div>
       )}
 
       {/* Active Game Screen View matching Image 2 */}
